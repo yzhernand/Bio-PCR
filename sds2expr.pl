@@ -3,21 +3,17 @@
 use strict;
 use warnings;
 use 5.010;
-use GetOpt::Long qw(:config gnu_getopt);
+use Getopt::Long qw(:config gnu_getopt);
 use Pod::Usage;
+use Data::Dumper;
 
 ################################################################################
 # Option parsing
 ################################################################################
 my %opts;
-GetOptions(
-        \%opts,
-        "help|h",
-        "man|m",
-        "reference|ref|r:s",
-        "calib|c:s",
-        "excel|x"
-          ) or pod2usage(2);
+GetOptions( \%opts, "help|h", "man|m", "reference|ref|r:s", "calib|c:s",
+    "excel|x", "cterr|e" )
+  or pod2usage(2);
 
 pod2usage(1) if $opts{"help"};
 pod2usage( -exitstatus => 0, -verbose => 2 ) if $opts{"man"};
@@ -26,34 +22,38 @@ pod2usage( -exitstatus => 0, -verbose => 2 ) if $opts{"man"};
 # Main
 ################################################################################
 
-die "Usage: $0 <input SDS 2.2>"
-    if @ARGV == 0;
+pod2usage(2) if ( @ARGV < 1 );
 
-my $filename = shift;
+my $sdsfile = shift;
 
 # Look up table for convenience. Has column indicies for needed data
-my %col_positions = (Pos => 0, Sample => 1, Detector => 2, Ct => 5);
+my %sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 
-open my $fh, "<", $filename;
+# Hash of genes to an arrayref of samples
+my %qpcr_readings = ();
 
-while (my $line = <$fh>) {
+open my $fh, "<", $sdsfile;
+
+while ( my $line = <$fh> ) {
     next unless $line =~ /^\d/;
     last if $line =~ /^Slope/;
 
-    my @fields = split(/\t/, $line);
+    my @fields = split( /\t/, $line );
 
-    for my $col (@colnames) {
-        if (!exists($new_col_positions{$col})) {
-            print "\t";
-            next;
-        }
+    my $gene   = $fields[ $sds_cols{detector} ];
 
-        print $fields[$new_col_positions{$col}], "\t";
-    }
-    print "\n";
+    my $sample_row = {
+        sample => $fields[ $sds_cols{sample} ],
+        ct     => $fields[ $sds_cols{ct} ]
+    };
+
+    push @{ $qpcr_readings{$gene} }, $sample_row;
+
 }
 
 close $fh;
+
+print Dumper(\%qpcr_readings);
 
 ################# POD Documentation ############
 
@@ -61,17 +61,26 @@ __END__
 
 =head1 NAME
 
-aln-manipulations.pl - Alignment tools based on BioPerl
+sds2expr.pl - Calculate relative expression change using the
+2^(-Delta Delta Ct) method. Input must be an SDS 2.2.2 formatted text
+file.
 
 =head1 SYNOPSIS
 
-B<aln-manipulations.pl> [options] [alignment file]
+B<sds2expr.pl> [options] <SDS 2.2.2 results text file>
 
 =head1 DESCRIPTION
 
-B<aln-manipulations.pl> will read an alignment file and 
-do slice, display match characters, etc. By default, B<aln-manipulations.pl>
-will assume both the input and the output are in clustalw format.
+B<sds2expr.pl> takes as input a qPCR results file from SDS 2.2.2 and
+calculates the relative expression change using the 2^(-Delta Delta Ct)
+method.
+
+The calculation can be done either using user-specified reference and
+calibrator samples, or doing pairwise calculations were every sample
+is used as a reference at least once.
+
+Note that files produced by SDS 2.3 or higher are not supported. For
+these, it is recommended to use the Bioconductor module HTqPCR for R.
 
 =head1 OPTIONS
 
@@ -100,6 +109,11 @@ This argument is optional. If it is not provided, the default is to use
 the same sample name as --ref. If that is also not provided, then the
 behavior is the same as described above, with the same sample used as
 both reference and calibrator.
+
+=item B<--cterr, -e> <error (real number)>
+
+Specify the amount of error allowed in Ct values. If at least one well
+had a reading +/- "error" #TODO
 
 =item B<--excel, -x>
 
