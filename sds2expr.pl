@@ -5,6 +5,7 @@ use warnings;
 use 5.010;
 use Getopt::Long qw(:config gnu_getopt);
 use Pod::Usage;
+use List::Util qw(sum);
 use Data::Dumper;
 
 ################################################################################
@@ -29,7 +30,7 @@ my $sdsfile = shift;
 # Look up table for convenience. Has column indicies for needed data
 my %sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 
-# Hash of genes to an arrayref of samples
+# Hash of genes to a hashref of samples
 my %qpcr_readings = ();
 
 open my $fh, "<", $sdsfile;
@@ -42,16 +43,43 @@ while ( my $line = <$fh> ) {
 
     my $gene   = $fields[ $sds_cols{detector} ];
 
-    my $sample_row = {
-        sample => $fields[ $sds_cols{sample} ],
-        ct     => $fields[ $sds_cols{ct} ]
-    };
+    my $sample = $fields[ $sds_cols{sample} ];
 
-    push @{ $qpcr_readings{$gene} }, $sample_row;
+    my $ct     = $fields[ $sds_cols{ct} ];
 
+    # %qpcr_readings contains hashrefs based on gene
+    # Each of those hashrefs use sample names as keys
+    # and themselves point to another hashref.
+    # That last nested hash will contain data for each sample
+    push @{ $qpcr_readings{$gene}->{$sample}->{ct} }, $ct;
 }
 
 close $fh;
+
+# By this point, all qPCR data will have been read.
+#
+# Begin filtering outliers from each sample, and
+# compute the true average and stddev
+
+for my $gene ( keys %qpcr_readings ) {
+    for my $sample ( keys %{$qpcr_readings{$gene}} ) {
+        my @ct_vals = @{ $qpcr_readings{$gene}->{$sample}->{ct} };
+
+        my $sum = sum(@ct_vals);
+
+        #TODO Probably better use Statistics::Basic
+        my $mean = $sum/ @ct_vals;
+
+        my $diff_squares = 0;
+        for my $val ( @ct_vals ){
+            $diff_squares += ($mean-$val)**2;
+        }
+
+        my $stddev = $diff_squares / @ct_vals;
+
+        say "Sum: $sum, mean: $mean, stddev: $stddev";
+    }
+}
 
 print Dumper(\%qpcr_readings);
 
