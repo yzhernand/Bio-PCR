@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use 5.010;
+use autodie;
 use Getopt::Long qw(:config gnu_getopt);
 use Pod::Usage;
 use List::Util qw(sum);
@@ -13,11 +14,17 @@ use Data::Dumper;
 ################################################################################
 my %opts;
 GetOptions( \%opts, "help|h", "man|m", "reference|ref|r:s", "calib|c:s",
-    "excel|x", "cterr|e" )
-  or pod2usage(2);
+    "excel|x", "cterr|e", "sep|s=s" )
+    or pod2usage(2);
 
 pod2usage(1) if $opts{"help"};
 pod2usage( -exitstatus => 0, -verbose => 2 ) if $opts{"man"};
+
+################################################################################
+# Prototyping
+################################################################################
+sub calc_stats(@);
+sub filter_outliers($$@);
 
 ################################################################################
 # Main
@@ -41,11 +48,11 @@ while ( my $line = <$fh> ) {
 
     my @fields = split( /\t/, $line );
 
-    my $gene   = $fields[ $sds_cols{detector} ];
+    my $gene = $fields[ $sds_cols{detector} ];
 
     my $sample = $fields[ $sds_cols{sample} ];
 
-    my $ct     = $fields[ $sds_cols{ct} ];
+    my $ct = $fields[ $sds_cols{ct} ];
 
     # %qpcr_readings contains hashrefs based on gene
     # Each of those hashrefs use sample names as keys
@@ -62,26 +69,140 @@ close $fh;
 # compute the true average and stddev
 
 for my $gene ( keys %qpcr_readings ) {
-    for my $sample ( keys %{$qpcr_readings{$gene}} ) {
+    for my $sample ( keys %{ $qpcr_readings{$gene} } ) {
         my @ct_vals = @{ $qpcr_readings{$gene}->{$sample}->{ct} };
 
-        my $sum = sum(@ct_vals);
+        my ( $mean, $stddev ) = calc_stats(@ct_vals);
 
-        #TODO Probably better use Statistics::Basic
-        my $mean = $sum/ @ct_vals;
+        #warn "Old ct_vals: @ct_vals\n";
 
-        my $diff_squares = 0;
-        for my $val ( @ct_vals ){
-            $diff_squares += ($mean-$val)**2;
-        }
+        # TODO When implemented, the --cterr option would
+        # replace $stddev, if it is supplied. Otherwise, old
+        # $stddev is used.
+        warn "Filtering $gene, sample $sample for outlying values\n";
+        ( $mean, $stddev, @ct_vals )
+            = filter_outliers( $mean, $stddev, @ct_vals );
+        warn "\n\n";
 
-        my $stddev = $diff_squares / @ct_vals;
+        #warn "New ct_vals: @ct_vals\n";
 
-        say "Sum: $sum, mean: $mean, stddev: $stddev";
+        $qpcr_readings{$gene}->{$sample}->{ct} = \@ct_vals;
+
+        $qpcr_readings{$gene}->{$sample}->{mean} = $mean;
     }
 }
 
-print Dumper(\%qpcr_readings);
+# Now, all Ct values have been scanned for significant outliers, and the mean
+# has been calculated. Time to get the delta_Ct, delta_delta_Ct and relative expression
+my @genes = keys %qpcr_readings;
+
+# Print a header for the output
+my $sep = $opts{sep} // "\t";
+say join( $sep,
+    qw(Gene_name Sample_name Ct_values Mean_Ct delta_Ct delta_delta_Ct Relative_expression Comment)
+);
+
+# Start at "first gene" in list
+for my $gene ( 0 .. @genes - 1 ) {
+
+    # Go through all its samples and use the current sample as the reference
+    my $gene_name = $genes[$gene];
+    my @samples   = keys %{ $qpcr_readings{$gene_name} };
+
+    for my $ref_sample ( 0 .. @samples - 1 ) {
+        my $sample_name = $samples[$ref_sample];
+
+      # Since this is the reference, fetch its mean and set its delta_Ct,
+      # dd_Ct and re_express to 0, 0 and 1, respectively
+      # TODO This needs to change for when manually setting reference
+      # FIXME VERY cluttered because of nested structures
+        my $ref_Ct   = $qpcr_readings{$gene_name}->{$sample_name}->{ct};
+        my $ref_mean = $qpcr_readings{$gene_name}->{$sample_name}->{mean};
+
+        my ( $ref_delta_Ct, $ref_d_delta_Ct, $ref_rel_express ) = ( 0, 0, 1 );
+
+        say join(
+            $sep,
+            (   $gene_name,       $sample_name,
+                "NEEDIMPL",       $ref_mean,
+                $ref_delta_Ct,    $ref_d_delta_Ct,
+                $ref_rel_express, "When used as reference"
+            )
+        );
+
+        #Now use its mean for each subsequent sample
+        for my $target_sample ( 0 .. @samples - 1 ) {
+            next if ( $target_sample == $ref_sample );
+            my $t_sample_name = $samples[$target_sample];
+            my $t_Ct
+                = $qpcr_readings{$gene_name}->{ $samples[$target_sample] }
+                ->{ct};
+            my $t_mean
+                = $qpcr_readings{$gene_name}->{ $samples[$target_sample] }
+                ->{mean};
+            my $t_delta_Ct    = $t_mean - $ref_mean;
+            my $t_d_delta_Ct  = $t_delta_Ct - $ref_delta_Ct;
+            my $t_rel_express = 2**( -$t_d_delta_Ct );
+
+            say join(
+                $sep,
+                (   $gene_name,     $t_sample_name,
+                    "NEEDIMPL",     $t_mean,
+                    $t_delta_Ct,    $t_d_delta_Ct,
+                    $t_rel_express, "When compared to $sample_name"
+                )
+            );
+        }
+        say "";
+    }
+
+    # Then compare with other genes, if they exist.
+}
+
+#print Dumper(\%qpcr_readings);
+
+################################################################################
+# Subroutines
+################################################################################
+sub calc_stats(@) {
+    my @ct_vals = @_;
+
+    #TODO Probably better use Statistics::Basic
+    my $sum  = sum(@ct_vals);
+    my $mean = $sum / @ct_vals;
+
+    my $diff_squares = 0;
+    for my $val (@ct_vals) {
+        $diff_squares += ( $val - $mean )**2;
+    }
+
+    # Use sample standard deviation (with Bessel's correction)
+    # as R, Excel and others do
+    my $stddev = sqrt( $diff_squares / ( @ct_vals - 1 ) );
+
+    #warn "Sum: $sum, mean: $mean, stddev: $stddev\n";
+
+    return ( $mean, $stddev );
+}
+
+sub filter_outliers($$@) {
+    my ( $mean, $stddev, @values ) = @_;
+
+    my @filtered;
+    for my $val (@values) {
+        if ( abs( $val - $mean ) <= $stddev ) {
+            push @filtered, $val;
+        }
+        else {
+            warn
+                "Value $val is more than one standard deviation from sample mean: discarding...\n";
+        }
+    }
+
+    ( $mean, $stddev ) = calc_stats(@filtered);
+
+    return $mean, $stddev, @filtered;
+}
 
 ################# POD Documentation ############
 
