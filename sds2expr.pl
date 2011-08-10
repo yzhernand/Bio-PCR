@@ -243,14 +243,14 @@ Print a brief help message and exits.
 
 Print the manual page and exits.
 
-=item B<--reference, --ref, -m>
+=item B<--reference, --ref, -m> <name of sample>
 
 Set the name of the reference/control sample.
 
 This argument is optional. If it is not provided, sds2expr will simply go
 through every sample and use every other sample as the reference.
 
-=item B<--calib, -c>
+=item B<--calib, -c> <name of sample>
 
 Set the name of the calibrator sample.
 
@@ -268,6 +268,17 @@ had a reading +/- "error" #TODO
 
 If specified, sds2expr will write an excel file to the same location of,
 and with the same name as, the input file (with a .xls extension).
+
+=item B<--sep, -s> <separator>
+
+Set the field delimiter in the output.
+
+By default, all fields in output are tab-separated. By setting this option
+to ',' (a comma) it is in effect the same as producing a CSV file (but on
+standard output, not to a file).
+
+Any string is a valid separator. The separator does not need to be only
+one character.
 
 =back
 
