@@ -13,8 +13,8 @@ use Data::Dumper;
 # Option parsing
 ################################################################################
 my %opts;
-GetOptions( \%opts, "help|h", "man|m", "reference|ref|r:s", "calib|c:s",
-    "excel|x", "cterr|e", "sep|s=s" )
+GetOptions( \%opts, "help|h", "man|m", "ref|reference|r:s", "calib|c:s" => \&opt_not_implemented,
+    "excel|x" => \&opt_not_implemented, "cterr|e=f", "sep|s=s" )
     or pod2usage(2);
 
 pod2usage(1) if $opts{"help"};
@@ -39,6 +39,7 @@ my %sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 
 # Hash of genes to a hashref of samples
 my %qpcr_readings = ();
+my $found_ref = 0;
 
 open my $fh, "<", $sdsfile;
 
@@ -54,6 +55,9 @@ while ( my $line = <$fh> ) {
 
     my $ct = $fields[ $sds_cols{ct} ];
 
+    $found_ref = 1
+        if ($sample eq $opts{ref});
+
     # %qpcr_readings contains hashrefs based on gene
     # Each of those hashrefs use sample names as keys
     # and themselves point to another hashref.
@@ -62,6 +66,10 @@ while ( my $line = <$fh> ) {
 }
 
 close $fh;
+
+die qq#Error: Reference sample "$opts{ref}" not found in file.
+Please check the name to make sure the spelling and/or capitalization is correct.\n#
+    if (defined $opts{ref} && !($found_ref) );
 
 # By this point, all qPCR data will have been read.
 #
@@ -108,8 +116,9 @@ for my $gene ( 0 .. @genes - 1 ) {
     # Go through all its samples and use the current sample as the reference
     my $gene_name = $genes[$gene];
     my @samples   = keys %{ $qpcr_readings{$gene_name} };
+    my $ref_samples = defined $opts{ref} ? [$opts{ref}] : \@samples;
 
-    for my $ref_sample ( 0 .. @samples - 1 ) {
+    for my $ref_sample ( 0 .. @$ref_samples - 1 ) {
         my $sample_name = $samples[$ref_sample];
 
       # Since this is the reference, fetch its mean and set its delta_Ct,
@@ -164,10 +173,14 @@ for my $gene ( 0 .. @genes - 1 ) {
 ################################################################################
 # Subroutines
 ################################################################################
+sub opt_not_implemented {
+    my ($optname, $value) = @_;
+    warn "Warning: option \"$optname\" is currently unimplemented. Ignored...\n\n";
+}
+
 sub calc_stats(@) {
     my @ct_vals = @_;
 
-    #TODO Probably better use Statistics::Basic
     my $sum  = sum(@ct_vals);
     my $mean = $sum / @ct_vals;
 
@@ -180,13 +193,13 @@ sub calc_stats(@) {
     # as R, Excel and others do
     my $stddev = sqrt( $diff_squares / ( @ct_vals - 1 ) );
 
-    #warn "Sum: $sum, mean: $mean, stddev: $stddev\n";
-
     return ( $mean, $stddev );
 }
 
 sub filter_outliers($$@) {
     my ( $mean, $stddev, @values ) = @_;
+
+    my $deviation = $opts{cterr} // $stddev;
 
     my @filtered;
     for my $val (@values) {
@@ -195,7 +208,7 @@ sub filter_outliers($$@) {
         }
         else {
             warn
-                "Value $val is more than one standard deviation from sample mean: discarding...\n";
+                "Warning: value $val lies outside permitted error range. Discarding...\n";
         }
     }
 
