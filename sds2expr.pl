@@ -13,9 +13,12 @@ use Data::Dumper;
 # Option parsing
 ################################################################################
 my %opts;
-GetOptions( \%opts, "help|h", "man|m", "ref|reference|r:s", "calib|c:s" => \&opt_not_implemented,
-    "excel|x" => \&opt_not_implemented, "cterr|e=f", "sep|s=s" )
-    or pod2usage(2);
+GetOptions(
+    \%opts, "help|h", "man|m", "ref|reference|r:s",
+    "calib|c:s" => \&opt_not_implemented,
+    "excel|x"   => \&opt_not_implemented,
+    "cterr|e=f", "sep|s=s"
+) or pod2usage(2);
 
 pod2usage(1) if $opts{"help"};
 pod2usage( -exitstatus => 0, -verbose => 2 ) if $opts{"man"};
@@ -39,7 +42,7 @@ my %sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 
 # Hash of genes to a hashref of samples
 my %qpcr_readings = ();
-my $found_ref = 0;
+my $found_ref     = 0;
 
 open my $fh, "<", $sdsfile;
 
@@ -56,7 +59,7 @@ while ( my $line = <$fh> ) {
     my $ct = $fields[ $sds_cols{ct} ];
 
     $found_ref = 1
-        if ($sample eq $opts{ref});
+        if ( $sample eq $opts{ref} );
 
     # %qpcr_readings contains hashrefs based on gene
     # Each of those hashrefs use sample names as keys
@@ -69,7 +72,7 @@ close $fh;
 
 die qq#Error: Reference sample "$opts{ref}" not found in file.
 Please check the name to make sure the spelling and/or capitalization is correct.\n#
-    if (defined $opts{ref} && !($found_ref) );
+    if ( defined $opts{ref} && !($found_ref) );
 
 # By this point, all qPCR data will have been read.
 #
@@ -114,17 +117,17 @@ say join( $sep,
 for my $gene ( 0 .. @genes - 1 ) {
 
     # Go through all its samples and use the current sample as the reference
-    my $gene_name = $genes[$gene];
-    my @samples   = keys %{ $qpcr_readings{$gene_name} };
-    my $ref_samples = defined $opts{ref} ? [$opts{ref}] : \@samples;
+    my $gene_name   = $genes[$gene];
+    my @samples     = keys %{ $qpcr_readings{$gene_name} };
+    my $ref_samples = defined $opts{ref} ? [ $opts{ref} ] : \@samples;
 
     for my $ref_sample ( 0 .. @$ref_samples - 1 ) {
         my $sample_name = $samples[$ref_sample];
 
-      # Since this is the reference, fetch its mean and set its delta_Ct,
-      # dd_Ct and re_express to 0, 0 and 1, respectively
-      # TODO This needs to change for when manually setting reference
-      # FIXME VERY cluttered because of nested structures
+        # Since this is the reference, fetch its mean and set its delta_Ct,
+        # dd_Ct and re_express to 0, 0 and 1, respectively
+        # TODO This needs to change for when manually setting reference
+        # FIXME VERY cluttered because of nested structures
         my $ref_Ct   = $qpcr_readings{$gene_name}->{$sample_name}->{ct};
         my $ref_mean = $qpcr_readings{$gene_name}->{$sample_name}->{mean};
 
@@ -174,8 +177,9 @@ for my $gene ( 0 .. @genes - 1 ) {
 # Subroutines
 ################################################################################
 sub opt_not_implemented {
-    my ($optname, $value) = @_;
-    warn "Warning: option \"$optname\" is currently unimplemented. Ignored...\n\n";
+    my ( $optname, $value ) = @_;
+    warn
+        "Warning: option \"$optname\" is currently unimplemented. Ignored...\n\n";
 }
 
 sub calc_stats(@) {
