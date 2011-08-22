@@ -87,10 +87,7 @@ for my $gene ( keys %qpcr_readings ) {
 
         #warn "Old ct_vals: @ct_vals\n";
 
-        # TODO When implemented, the --cterr option would
-        # replace $stddev, if it is supplied. Otherwise, old
-        # $stddev is used.
-        warn "Filtering $gene, sample $sample for outlying values\n";
+        warn "Filtering $gene, sample $sample for outlying values...\n";
         ( $mean, $stddev, @ct_vals )
             = filter_outliers( $mean, $stddev, @ct_vals );
         warn "\n\n";
@@ -122,7 +119,7 @@ for my $gene ( 0 .. @genes - 1 ) {
     my $ref_samples = defined $opts{ref} ? [ $opts{ref} ] : \@samples;
 
     for my $ref_sample ( 0 .. @$ref_samples - 1 ) {
-        my $sample_name = $samples[$ref_sample];
+        my $sample_name = $ref_samples->[$ref_sample];
 
         # Since this is the reference, fetch its mean and set its delta_Ct,
         # dd_Ct and re_express to 0, 0 and 1, respectively
@@ -136,16 +133,20 @@ for my $gene ( 0 .. @genes - 1 ) {
         say join(
             $sep,
             (   $gene_name,       $sample_name,
-                "NEEDIMPL",       $ref_mean,
+                $ref_Ct->[0],       $ref_mean,
                 $ref_delta_Ct,    $ref_d_delta_Ct,
                 $ref_rel_express, "When used as reference"
             )
         );
 
+        for my $Ct_pos ( 1 .. @$ref_Ct-1) {
+            say join($sep, ("","",$ref_Ct->[$Ct_pos],"","","","",""));
+        }
+
         #Now use its mean for each subsequent sample
         for my $target_sample ( 0 .. @samples - 1 ) {
-            next if ( $target_sample == $ref_sample );
             my $t_sample_name = $samples[$target_sample];
+            next if ( $t_sample_name eq $sample_name );
             my $t_Ct
                 = $qpcr_readings{$gene_name}->{ $samples[$target_sample] }
                 ->{ct};
@@ -159,11 +160,16 @@ for my $gene ( 0 .. @genes - 1 ) {
             say join(
                 $sep,
                 (   $gene_name,     $t_sample_name,
-                    "NEEDIMPL",     $t_mean,
+                    $t_Ct->[0],     $t_mean,
                     $t_delta_Ct,    $t_d_delta_Ct,
                     $t_rel_express, "When compared to $sample_name"
                 )
             );
+
+            for my $Ct_pos ( 1 .. @$t_Ct-1) {
+                say join($sep, ("","",$t_Ct->[$Ct_pos],"","","","",""));
+            }
+
         }
         say "";
     }
@@ -203,18 +209,26 @@ sub calc_stats(@) {
 sub filter_outliers($$@) {
     my ( $mean, $stddev, @values ) = @_;
 
-    my $deviation = $opts{cterr} // $stddev;
+    my $allowed_error = $opts{cterr} // $stddev;
+
+    warn "No error specified. Using the standard deviation of the sample ($stddev) instead.\n"
+        if (!defined($opts{cterr}));
 
     my @filtered;
     for my $val (@values) {
-        if ( abs( $val - $mean ) <= $stddev ) {
+        my $deviation = abs( $val - $mean );
+        if ( $deviation <= $allowed_error ) {
             push @filtered, $val;
         }
         else {
             warn
                 "Warning: value $val lies outside permitted error range. Discarding...\n";
+            #warn "(|$val - $mean| = ", $deviation , " > $allowed_error)\n";
         }
     }
+
+    die "Error: No values lie within specified error range! Please allow for a larger error! Exiting...\n"
+        if (@filtered == 0);
 
     ( $mean, $stddev ) = calc_stats(@filtered);
 
