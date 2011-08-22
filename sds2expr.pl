@@ -133,14 +133,15 @@ for my $gene ( 0 .. @genes - 1 ) {
         say join(
             $sep,
             (   $gene_name,       $sample_name,
-                $ref_Ct->[0],       $ref_mean,
+                $ref_Ct->[0],     $ref_mean,
                 $ref_delta_Ct,    $ref_d_delta_Ct,
                 $ref_rel_express, "When used as reference"
             )
         );
 
-        for my $Ct_pos ( 1 .. @$ref_Ct-1) {
-            say join($sep, ("","",$ref_Ct->[$Ct_pos],"","","","",""));
+        for my $Ct_pos ( 1 .. @$ref_Ct - 1 ) {
+            say join( $sep,
+                ( "", "", $ref_Ct->[$Ct_pos], "", "", "", "", "" ) );
         }
 
         #Now use its mean for each subsequent sample
@@ -166,8 +167,9 @@ for my $gene ( 0 .. @genes - 1 ) {
                 )
             );
 
-            for my $Ct_pos ( 1 .. @$t_Ct-1) {
-                say join($sep, ("","",$t_Ct->[$Ct_pos],"","","","",""));
+            for my $Ct_pos ( 1 .. @$t_Ct - 1 ) {
+                say join( $sep,
+                    ( "", "", $t_Ct->[$Ct_pos], "", "", "", "", "" ) );
             }
 
         }
@@ -211,8 +213,9 @@ sub filter_outliers($$@) {
 
     my $allowed_error = $opts{cterr} // $stddev;
 
-    warn "No error specified. Using the standard deviation of the sample ($stddev) instead.\n"
-        if (!defined($opts{cterr}));
+    warn
+        "No error specified. Using the standard deviation of the sample ($stddev) instead.\n"
+        if ( !defined( $opts{cterr} ) );
 
     my @filtered;
     for my $val (@values) {
@@ -223,12 +226,14 @@ sub filter_outliers($$@) {
         else {
             warn
                 "Warning: value $val lies outside permitted error range. Discarding...\n";
+
             #warn "(|$val - $mean| = ", $deviation , " > $allowed_error)\n";
         }
     }
 
-    die "Error: No values lie within specified error range! Please allow for a larger error! Exiting...\n"
-        if (@filtered == 0);
+    die
+        "Error: No values lie within specified error range! Please allow for a larger error! Exiting...\n"
+        if ( @filtered == 0 );
 
     ( $mean, $stddev ) = calc_stats(@filtered);
 
