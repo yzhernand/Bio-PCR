@@ -1,0 +1,184 @@
+SDS 2.2.2	AQ Results	1.0
+Filename	pc12 GABC
+PlateID	
+Assay Type	Absolute Quantification
+Run DateTime	8/23/11 12:10:33 PM
+Operator	
+ThermalCycleParams	
+
+Sample Information
+
+Well	Sample Name	Detector Name	Reporter	Task	Ct	Quantity	Qty Mean	Qty StdDev	Ct Mean	Ct StdDev	Baseline Type	Baseline Start	Baseline Stop	Threshold Type	Threshold	
+268	KD ABC	AldoA	SYBR	Unknown	28.283926						Manual	3	15	Manual	0.1	
+269	KD ABC	AldoA	SYBR	Unknown	28.388145						Manual	3	15	Manual	0.1	
+270	KD ABC	AldoA	SYBR	Unknown	28.776047						Manual	3	15	Manual	0.1	
+100	KD Aa	AldoA	SYBR	Unknown	32.26884						Manual	3	15	Manual	0.1	
+101	KD Aa	AldoA	SYBR	Unknown	31.087368						Manual	3	15	Manual	0.1	
+102	KD Aa	AldoA	SYBR	Unknown	30.915936						Manual	3	15	Manual	0.1	
+196	KD Ab	AldoA	SYBR	Unknown	24.760998						Manual	3	15	Manual	0.1	
+197	KD Ab	AldoA	SYBR	Unknown	24.867376						Manual	3	15	Manual	0.1	
+198	KD Ab	AldoA	SYBR	Unknown	25.1884						Manual	3	15	Manual	0.1	
+220	KD Bb	AldoA	SYBR	Unknown	24.58607						Manual	3	15	Manual	0.1	
+221	KD Bb	AldoA	SYBR	Unknown	24.437199						Manual	3	15	Manual	0.1	
+222	KD Bb	AldoA	SYBR	Unknown	24.504896						Manual	3	15	Manual	0.1	
+124	KD Ca	AldoA	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+125	KD Ca	AldoA	SYBR	Unknown	38.360832						Manual	3	15	Manual	0.1	
+126	KD Ca	AldoA	SYBR	Unknown	34.440746						Manual	3	15	Manual	0.1	
+244	KD Cb	AldoA	SYBR	Unknown	29.87667						Manual	3	15	Manual	0.1	
+245	KD Cb	AldoA	SYBR	Unknown	29.912407						Manual	3	15	Manual	0.1	
+246	KD Cb	AldoA	SYBR	Unknown	29.51657						Manual	3	15	Manual	0.1	
+52	mockA	AldoA	SYBR	Unknown	36.317116						Manual	3	15	Manual	0.1	
+53	mockA	AldoA	SYBR	Unknown	37.015347						Manual	3	15	Manual	0.1	
+54	mockA	AldoA	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+148	mockb	AldoA	SYBR	Unknown	33.73985						Manual	3	15	Manual	0.1	
+149	mockb	AldoA	SYBR	Unknown	34.54992						Manual	3	15	Manual	0.1	
+150	mockb	AldoA	SYBR	Unknown	29.328669						Manual	3	15	Manual	0.1	
+76	scrambledA	AldoA	SYBR	Unknown	32.928936						Manual	3	15	Manual	0.1	
+77	scrambledA	AldoA	SYBR	Unknown	32.338463						Manual	3	15	Manual	0.1	
+78	scrambledA	AldoA	SYBR	Unknown	31.422693						Manual	3	15	Manual	0.1	
+172	scrambledb	AldoA	SYBR	Unknown	30.364794						Manual	3	15	Manual	0.1	
+173	scrambledb	AldoA	SYBR	Unknown	29.227423						Manual	3	15	Manual	0.1	
+174	scrambledb	AldoA	SYBR	Unknown	29.456018						Manual	3	15	Manual	0.1	
+28	untreated 1-1	AldoA	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+29	untreated 1-1	AldoA	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+30	untreated 1-1	AldoA	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+4	untreated 1-2	AldoA	SYBR	Unknown	39.08823						Manual	3	15	Manual	0.1	
+5	untreated 1-2	AldoA	SYBR	Unknown	33.406887						Manual	3	15	Manual	0.1	
+6	untreated 1-2	AldoA	SYBR	Unknown	36.436134						Manual	3	15	Manual	0.1	
+Slope		cycles/log decade
+Y-Intercept		
+R^2		
+
+
+Well	Sample Name	Detector Name	Reporter	Task	Ct	Quantity	Qty Mean	Qty StdDev	Ct Mean	Ct StdDev	Baseline Type	Baseline Start	Baseline Stop	Threshold Type	Threshold	
+271	KD ABC	AldoB	FAM	Unknown	30.056688						Manual	3	15	Manual	0.1	
+272	KD ABC	AldoB	FAM	Unknown	30.326117						Manual	3	15	Manual	0.1	
+273	KD ABC	AldoB	FAM	Unknown	30.398651						Manual	3	15	Manual	0.1	
+103	KD Aa	AldoB	FAM	Unknown	33.217625						Manual	3	15	Manual	0.1	
+104	KD Aa	AldoB	FAM	Unknown	32.91609						Manual	3	15	Manual	0.1	
+105	KD Aa	AldoB	FAM	Unknown	31.955938						Manual	3	15	Manual	0.1	
+199	KD Ab	AldoB	FAM	Unknown	31.805424						Manual	3	15	Manual	0.1	
+200	KD Ab	AldoB	FAM	Unknown	33.356583						Manual	3	15	Manual	0.1	
+201	KD Ab	AldoB	FAM	Unknown	33.353157						Manual	3	15	Manual	0.1	
+223	KD Bb	AldoB	FAM	Unknown	30.867989						Manual	3	15	Manual	0.1	
+224	KD Bb	AldoB	FAM	Unknown	31.221283						Manual	3	15	Manual	0.1	
+225	KD Bb	AldoB	FAM	Unknown	31.375628						Manual	3	15	Manual	0.1	
+127	KD Ca	AldoB	FAM	Unknown	34.19302						Manual	3	15	Manual	0.1	
+128	KD Ca	AldoB	FAM	Unknown	32.955112						Manual	3	15	Manual	0.1	
+129	KD Ca	AldoB	FAM	Unknown	32.76005						Manual	3	15	Manual	0.1	
+247	KD Cb	AldoB	FAM	Unknown	32.571705						Manual	3	15	Manual	0.1	
+248	KD Cb	AldoB	FAM	Unknown	31.848644						Manual	3	15	Manual	0.1	
+249	KD Cb	AldoB	FAM	Unknown	32.638783						Manual	3	15	Manual	0.1	
+55	mockA	AldoB	FAM	Unknown	33.79312						Manual	3	15	Manual	0.1	
+56	mockA	AldoB	FAM	Unknown	34.77158						Manual	3	15	Manual	0.1	
+57	mockA	AldoB	FAM	Unknown	34.13156						Manual	3	15	Manual	0.1	
+151	mockb	AldoB	FAM	Unknown	32.132164						Manual	3	15	Manual	0.1	
+152	mockb	AldoB	FAM	Unknown	32.20813						Manual	3	15	Manual	0.1	
+153	mockb	AldoB	FAM	Unknown	31.978422						Manual	3	15	Manual	0.1	
+79	scrambledA	AldoB	FAM	Unknown	33.76746						Manual	3	15	Manual	0.1	
+80	scrambledA	AldoB	FAM	Unknown	36.081333						Manual	3	15	Manual	0.1	
+81	scrambledA	AldoB	FAM	Unknown	37.14434						Manual	3	15	Manual	0.1	
+175	scrambledb	AldoB	FAM	Unknown	29.463737						Manual	3	15	Manual	0.1	
+176	scrambledb	AldoB	FAM	Unknown	29.63931						Manual	3	15	Manual	0.1	
+177	scrambledb	AldoB	FAM	Unknown	29.419794						Manual	3	15	Manual	0.1	
+31	untreated 1-1	AldoB	FAM	Unknown	32.547832						Manual	3	15	Manual	0.1	
+32	untreated 1-1	AldoB	FAM	Unknown	34.87138						Manual	3	15	Manual	0.1	
+33	untreated 1-1	AldoB	FAM	Unknown	31.261463						Manual	3	15	Manual	0.1	
+7	untreated 1-2	AldoB	FAM	Unknown	34.81172						Manual	3	15	Manual	0.1	
+8	untreated 1-2	AldoB	FAM	Unknown	33.75495						Manual	3	15	Manual	0.1	
+9	untreated 1-2	AldoB	FAM	Unknown	32.149197						Manual	3	15	Manual	0.1	
+Slope		cycles/log decade
+Y-Intercept		
+R^2		
+
+
+Well	Sample Name	Detector Name	Reporter	Task	Ct	Quantity	Qty Mean	Qty StdDev	Ct Mean	Ct StdDev	Baseline Type	Baseline Start	Baseline Stop	Threshold Type	Threshold	
+274	KD ABC	AldoC	SYBR	Unknown	26.93368						Manual	3	15	Manual	0.1	
+275	KD ABC	AldoC	SYBR	Unknown	26.856539						Manual	3	15	Manual	0.1	
+276	KD ABC	AldoC	SYBR	Unknown	26.792421						Manual	3	15	Manual	0.1	
+106	KD Aa	AldoC	SYBR	Unknown	38.287773						Manual	3	15	Manual	0.1	
+107	KD Aa	AldoC	SYBR	Unknown	35.644485						Manual	3	15	Manual	0.1	
+108	KD Aa	AldoC	SYBR	Unknown	37.84792						Manual	3	15	Manual	0.1	
+202	KD Ab	AldoC	SYBR	Unknown	31.430635						Manual	3	15	Manual	0.1	
+203	KD Ab	AldoC	SYBR	Unknown	32.211224						Manual	3	15	Manual	0.1	
+204	KD Ab	AldoC	SYBR	Unknown	31.445507						Manual	3	15	Manual	0.1	
+226	KD Bb	AldoC	SYBR	Unknown	27.956146						Manual	3	15	Manual	0.1	
+227	KD Bb	AldoC	SYBR	Unknown	28.366034						Manual	3	15	Manual	0.1	
+228	KD Bb	AldoC	SYBR	Unknown	27.917679						Manual	3	15	Manual	0.1	
+130	KD Ca	AldoC	SYBR	Unknown	36.976826						Manual	3	15	Manual	0.1	
+131	KD Ca	AldoC	SYBR	Unknown	37.374107						Manual	3	15	Manual	0.1	
+132	KD Ca	AldoC	SYBR	Unknown	36.65633						Manual	3	15	Manual	0.1	
+250	KD Cb	AldoC	SYBR	Unknown	34.134705						Manual	3	15	Manual	0.1	
+251	KD Cb	AldoC	SYBR	Unknown	34.234913						Manual	3	15	Manual	0.1	
+252	KD Cb	AldoC	SYBR	Unknown	34.646862						Manual	3	15	Manual	0.1	
+58	mockA	AldoC	SYBR	Unknown	38.265274						Manual	3	15	Manual	0.1	
+59	mockA	AldoC	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+60	mockA	AldoC	SYBR	Unknown	37.967804						Manual	3	15	Manual	0.1	
+154	mockb	AldoC	SYBR	Unknown	33.4243						Manual	3	15	Manual	0.1	
+155	mockb	AldoC	SYBR	Unknown	31.623316						Manual	3	15	Manual	0.1	
+156	mockb	AldoC	SYBR	Unknown	32.22669						Manual	3	15	Manual	0.1	
+82	scrambledA	AldoC	SYBR	Unknown	36.32085						Manual	3	15	Manual	0.1	
+83	scrambledA	AldoC	SYBR	Unknown	37.796543						Manual	3	15	Manual	0.1	
+84	scrambledA	AldoC	SYBR	Unknown	37.652737						Manual	3	15	Manual	0.1	
+178	scrambledb	AldoC	SYBR	Unknown	29.325768						Manual	3	15	Manual	0.1	
+179	scrambledb	AldoC	SYBR	Unknown	29.021357						Manual	3	15	Manual	0.1	
+180	scrambledb	AldoC	SYBR	Unknown	29.153086						Manual	3	15	Manual	0.1	
+34	untreated 1-1	AldoC	SYBR	Unknown	38.184025						Manual	3	15	Manual	0.1	
+35	untreated 1-1	AldoC	SYBR	Unknown	37.135925						Manual	3	15	Manual	0.1	
+36	untreated 1-1	AldoC	SYBR	Unknown	35.68946						Manual	3	15	Manual	0.1	
+10	untreated 1-2	AldoC	SYBR	Unknown	39.14325						Manual	3	15	Manual	0.1	
+11	untreated 1-2	AldoC	SYBR	Unknown	Undetermined						Manual	3	15	Manual	0.1	
+12	untreated 1-2	AldoC	SYBR	Unknown	36.58434						Manual	3	15	Manual	0.1	
+Slope		cycles/log decade
+Y-Intercept		
+R^2		
+
+
+Well	Sample Name	Detector Name	Reporter	Task	Ct	Quantity	Qty Mean	Qty StdDev	Ct Mean	Ct StdDev	Baseline Type	Baseline Start	Baseline Stop	Threshold Type	Threshold	
+265	KD ABC	GAPDH	SYBR	Unknown	19.381859						Manual	3	15	Manual	0.1	
+266	KD ABC	GAPDH	SYBR	Unknown	19.255476						Manual	3	15	Manual	0.1	
+267	KD ABC	GAPDH	SYBR	Unknown	19.307253						Manual	3	15	Manual	0.1	
+97	KD Aa	GAPDH	SYBR	Unknown	25.422499						Manual	3	15	Manual	0.1	
+98	KD Aa	GAPDH	SYBR	Unknown	25.870098						Manual	3	15	Manual	0.1	
+99	KD Aa	GAPDH	SYBR	Unknown	25.622559						Manual	3	15	Manual	0.1	
+193	KD Ab	GAPDH	SYBR	Unknown	20.572426						Manual	3	15	Manual	0.1	
+194	KD Ab	GAPDH	SYBR	Unknown	20.556425						Manual	3	15	Manual	0.1	
+195	KD Ab	GAPDH	SYBR	Unknown	20.45772						Manual	3	15	Manual	0.1	
+217	KD Bb	GAPDH	SYBR	Unknown	18.89081						Manual	3	15	Manual	0.1	
+218	KD Bb	GAPDH	SYBR	Unknown	18.893963						Manual	3	15	Manual	0.1	
+219	KD Bb	GAPDH	SYBR	Unknown	18.876802						Manual	3	15	Manual	0.1	
+121	KD Ca	GAPDH	SYBR	Unknown	28.531372						Manual	3	15	Manual	0.1	
+122	KD Ca	GAPDH	SYBR	Unknown	28.638376						Manual	3	15	Manual	0.1	
+123	KD Ca	GAPDH	SYBR	Unknown	29.03527						Manual	3	15	Manual	0.1	
+241	KD Cb	GAPDH	SYBR	Unknown	28.59133						Manual	3	15	Manual	0.1	
+242	KD Cb	GAPDH	SYBR	Unknown	27.77164						Manual	3	15	Manual	0.1	
+243	KD Cb	GAPDH	SYBR	Unknown	28.771883						Manual	3	15	Manual	0.1	
+49	mockA	GAPDH	SYBR	Unknown	29.465214						Manual	3	15	Manual	0.1	
+50	mockA	GAPDH	SYBR	Unknown	28.958384						Manual	3	15	Manual	0.1	
+51	mockA	GAPDH	SYBR	Unknown	29.597141						Manual	3	15	Manual	0.1	
+145	mockb	GAPDH	SYBR	Unknown	26.531397						Manual	3	15	Manual	0.1	
+146	mockb	GAPDH	SYBR	Unknown	26.380007						Manual	3	15	Manual	0.1	
+147	mockb	GAPDH	SYBR	Unknown	26.400805						Manual	3	15	Manual	0.1	
+73	scrambledA	GAPDH	SYBR	Unknown	29.960564						Manual	3	15	Manual	0.1	
+74	scrambledA	GAPDH	SYBR	Unknown	29.864565						Manual	3	15	Manual	0.1	
+75	scrambledA	GAPDH	SYBR	Unknown	29.435219						Manual	3	15	Manual	0.1	
+169	scrambledb	GAPDH	SYBR	Unknown	22.670855						Manual	3	15	Manual	0.1	
+170	scrambledb	GAPDH	SYBR	Unknown	22.986403						Manual	3	15	Manual	0.1	
+171	scrambledb	GAPDH	SYBR	Unknown	22.728256						Manual	3	15	Manual	0.1	
+25	untreated 1-1	GAPDH	SYBR	Unknown	31.223305						Manual	3	15	Manual	0.1	
+26	untreated 1-1	GAPDH	SYBR	Unknown	30.457722						Manual	3	15	Manual	0.1	
+27	untreated 1-1	GAPDH	SYBR	Unknown	31.422009						Manual	3	15	Manual	0.1	
+1	untreated 1-2	GAPDH	SYBR	Unknown	29.30717						Manual	3	15	Manual	0.1	
+2	untreated 1-2	GAPDH	SYBR	Unknown	28.932638						Manual	3	15	Manual	0.1	
+3	untreated 1-2	GAPDH	SYBR	Unknown	29.190022						Manual	3	15	Manual	0.1	
+Slope		cycles/log decade
+Y-Intercept		
+R^2		
+
+
+Well	Sample Name	Detector Name	Reporter	Task	Ct	Quantity	Qty Mean	Qty StdDev	Ct Mean	Ct StdDev	Baseline Type	Baseline Start	Baseline Stop	Threshold Type	Threshold	
+Slope		cycles/log decade
+Y-Intercept		
+R^2		
+
+

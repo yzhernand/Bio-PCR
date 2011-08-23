@@ -73,6 +73,7 @@ my %_sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 
 sub new {
     my ( $caller, @args ) = @_;
+    my $self = {};
 
     my %param = @args;
     @param{ map { lc $_ } keys %param } = values %param;    # lowercase keys
@@ -104,6 +105,9 @@ sub new {
     }
 
     close $fh;
+
+    bless ($self, $caller);
+    return $self;
 }
 
 =head2 get_all_experiments
