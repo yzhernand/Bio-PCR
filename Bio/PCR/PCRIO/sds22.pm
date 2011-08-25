@@ -44,10 +44,11 @@ Internal methods are usually preceded with a _
 package Bio::PCR::PCRIO::sds22;
 use strict;
 use 5.010;
+use Carp;
 
-#use Bio::PCR::Well;
-#use Bio::PCR::Sample;
-#use Bio::PCR::Experiment;
+use Bio::PCR::Well;
+use Bio::PCR::Sample;
+use Bio::PCR::Experiment;
 
 # Look up table for convenience. Has column indicies for needed data
 my %_sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
@@ -64,8 +65,11 @@ my %_sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
  Function: Builds a new Bio::PCR::PCRIO object 
  Returns : Bio::PCR::PCRIO
  Args    : a hash.  useful keys:
-   -file   : The name of the input file
-   -format : Specify the format of the file.  Supported formats:
+   -file    : The name of the input file
+   -cterr   : Allowed error in Ct value
+   -ref     : Reference sequence
+   -calib   : Calibrator sequence
+   -format  : Specify the format of the file.  Supported formats:
 
      sds22              SDS 2.2 format (default)
 
@@ -78,6 +82,11 @@ sub new {
     my %param = @args;
     @param{ map { lc $_ } keys %param } = values %param;    # lowercase keys
 
+    # Optional arguments
+    my $self->{CTERR}    = $param{'-cterr'} // undef;
+    my $self->{REFSEQ}   = $param{'-ref'}   // undef;
+    my $self->{CALIBSEQ} = $param{'-calib'} // undef;
+
     my $sdsfile = $param{'-file'};
     open my $fh, "<", $sdsfile;
 
@@ -88,26 +97,61 @@ sub new {
 
         my @fields = split( /\t/, $line );
 
+        my $pos = $fields[ $_sds_cols{pos} ];
+
         my $gene = $fields[ $_sds_cols{detector} ];
 
         my $sample = $fields[ $_sds_cols{sample} ];
 
         my $ct = $fields[ $_sds_cols{ct} ];
 
-        #    $found_ref = 1
-        #        if ( $sample eq $opts{ref} );
+        #$found_ref = 1
+        #    if ( $sample eq $opts{ref} );
 
-        # qpcr_readings contains hashrefs based on sample
-        # Each of those hashrefs use gene names as keys
-        # and themselves point to another hashref.
-        # That last nested hash will contain data for each sample
-        push @{ $self->{qpcr_readings}->{$sample}->{$gene}->{ct} }, $ct;
+        unless ( defined( $self->{qpcr_readings}->{$sample}->{$gene} ) ) {
+            my $sample_obj = Bio::PCR::Sample->new(
+                -name  => $gene,
+                -cterr => $self->{CTERR}
+            );
+            $self->{qpcr_readings}->{$sample}->{$gene} = $sample_obj;
+        }
+
+        if ( $ct =~ /Undetermined/ ) {
+            carp "WARNING: Well $pos is Undetermined. Ignoring...\n" next;
+        }
+
+        my $well = Bio::PCR::Well->new( -ct => $ct, -pos => $pos );
+        $self->{qpcr_readings}->{$sample}->{$gene}->add_well($well);
     }
 
     close $fh;
 
-    bless ($self, $caller);
+    $self->make_experiments();
+
+    bless( $self, $caller );
     return $self;
+}
+
+=head2 _make_experiments
+
+ Title   : _make_experiments
+ Usage   : $self->_make_experiments();
+ Function: Creates experiment objects using the internal hash built from file
+ Returns : None
+ Args    : None
+
+=cut
+
+sub _make_experiments {
+    my $self = shift;
+
+    for my $sample ( keys $self->{qpcr_readings} ) {
+        my $experiment = Bio::PCR::Experiment->new(
+            -name    => $sample,
+            -samples => $self->{qpcr_readings}->{$sample}
+        );
+        push( @{ $self->{EXPERIMENTS} }, $experiment );
+    }
 }
 
 =head2 get_all_experiments
@@ -125,3 +169,6 @@ sub get_all_experiments {
 
     return $self->{qpcr_readings};
 }
+
+1;
+
