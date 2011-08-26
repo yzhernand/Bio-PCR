@@ -46,13 +46,12 @@ Internal methods are usually preceded with a _
 
 package Bio::PCR::Well;
 use strict;
+use warnings;
+use Carp;
 use 5.010;
 
 #use Bio::PCR::Sample;
 #use Bio::PCR::Experiment;
-
-# Used if a well does not have a position.
-my $undef_pos_count = 0;
 
 =head2 new
 
@@ -78,7 +77,10 @@ sub new {
     $ct_val = undef
         if ( $ct_val =~ /Undetermined/ );
 
-    my $pos = $param{'-pos'} // $class->undef_pos_count++;
+    #croak "Error: Missing required arugument '-pos'.\n"
+    #   unless ($param{'pos');
+
+    my $pos = $param{'-pos'};
 
     $self->{CT}  = $ct_val;
     $self->{POS} = $pos;

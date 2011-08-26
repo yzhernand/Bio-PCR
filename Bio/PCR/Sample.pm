@@ -58,12 +58,6 @@ use Bio::PCR::Well;
 
 #use Bio::PCR::Experiment;
 
-# Counter to use if for whatever reason a sample has no name
-# This should be a hint to the user because it will always
-# increment for *each* nameless sample. It will be pretty useless
-# to have many one-well samples with no names.
-my $unknown_count = 0;
-
 =head2 new
 
  Title   : new
@@ -86,15 +80,15 @@ sub new {
     my %param = @args;
     @param{ map { lc $_ } keys %param } = values %param;    # lowercase keys
 
-    my $name = $param{'-name'} // "Unknown_sample_" . $class->unknown_count++;
+    my $name = $param{'-name'} // "Unknown_sample";
 
     #croak "Error: Missing required argument '-wells'."
     #    unless(exists $param{'-wells'});
 
     my $wells = $param{'-wells'};
 
-    croak "Error: '-wells' not an array ref."
-        . "Please supply an arrayref of Bio::PCR::Wells objects"
+    croak "Error: '-wells' not an array ref. ",
+         "Please supply an arrayref of Bio::PCR::Wells objects"
         if ( ( defined($wells) ) && ( ref($wells) ne 'ARRAY' ) );
 
     my $cterr = $param{'-cterr'};
@@ -104,8 +98,11 @@ sub new {
     $self->{CT_STDDEV} = $cterr;    # Prefer over sample stddev.
 
     bless( $self, $class );
+
+    $self->filter_outliers();
     return $self;
 }
+
 
 =head2 get_name
 
@@ -123,6 +120,7 @@ sub get_name {
     return $self->{NAME};
 }
 
+
 =head2 set_wells
 
  Title   : set_wells
@@ -137,10 +135,11 @@ sub set_wells {
     my ( $self, $wells ) = @_;
 
     ( ref($wells) eq 'ARRAY' )
-        ? $self->{WELLS}
+        ? $self->{WELLS} = $wells
         : croak
         "Error: Using a non-arrayref value when attempting to set the wells.\n";
 }
+
 
 =head2 add_well
 
@@ -159,6 +158,24 @@ sub add_well {
         ? push( @{ $self->{WELLS} }, $well )
         : croak "Error: not a Bio::PCR::Well object when adding a well.\n";
 }
+
+
+=head2 num_wells
+
+ Title   : num_wells
+ Usage   : my $num_wells = $sample->num_wells();
+ Function: Gets the number of wells in a sample
+ Returns : Number of wells
+ Args    : None
+
+=cut
+
+sub num_wells {
+    my $self = shift;
+
+    return @{ $self->{WELLS} } * 1;
+}
+
 
 =head2 get_all_ct
 
@@ -182,6 +199,7 @@ sub get_all_ct {
     return @ct_vals;
 }
 
+
 =head2 get_avg_ct
 
  Title   : get_avg_ct
@@ -204,6 +222,7 @@ sub get_avg_ct {
 
     return $self->{AVG_CT};
 }
+
 
 =head2 get_ct_stddev
 
@@ -237,6 +256,7 @@ sub get_ct_stddev {
     return $self->{CT_STDDEV};
 }
 
+
 =head2 filter_outliers
 
  Title   : filter_outliers
@@ -251,8 +271,15 @@ sub get_ct_stddev {
 sub filter_outliers() {
     my $self = shift;
 
-    my @filtered = @{ $self->{WELLS} };
-    for my $well (@filtered) {
+    # Calculate average and stddev if they haven't been already
+    $self->get_avg_ct
+        unless $self->{AVG_CT};
+    $self->get_ct_stddev
+        unless $self->{CT_STDDEV};
+
+    my @filtered;
+    my @wells = @{ $self->{WELLS} };
+    for my $well (@wells) {
         my $deviation = abs( $well->get_ct() - $self->{AVG_CT} );
         if ( $deviation <= $self->{CT_STDDEV} ) {
             push @filtered, $well;
@@ -262,7 +289,7 @@ sub filter_outliers() {
                 " lies outside permitted error range. Discarding well at position ",
                 $well->get_pos(), " ...\n";
 
-#carp "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ", $deviation , " > $self->{CT_STDDEV})\n";
+            carp "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ", $deviation , " > $self->{CT_STDDEV})\n";
         }
     }
 
@@ -271,7 +298,13 @@ sub filter_outliers() {
         if ( @filtered == 0 );
 
     $self->{WELLS} = \@filtered;
+    
+    # Force recalculation of stats next time they are needed
+    $self->{AVG_CT} = undef;
+    $self->{CT_STDDEV} = undef;
+    $self->get_ct_stddev;
 }
+
 
 =head2 get_delta_ct
 
@@ -290,6 +323,7 @@ sub get_delta_ct() {
     return $self->{D_CT};
 }
 
+
 =head2 set_delta_ct
 
  Title   : set_delta_ct
@@ -307,9 +341,10 @@ sub set_delta_ct() {
     $self->{D_CT} = $delta_ct;
 }
 
+
 =head2 get_dd_ct
 
- Title   : get_d_ct
+ Title   : get_dd_ct
  Usage   : my $dd_ct = $sample->get_dd_ct();
  Function: Returns the delta delta Ct, if set. Else, returns undef
  Returns : Real number, scalar (if set)
@@ -323,6 +358,7 @@ sub get_dd_ct() {
 
     return $self->{DD_CT};
 }
+
 
 =head2 set_dd_ct
 
@@ -340,6 +376,44 @@ sub set_dd_ct() {
     # TODO validation
     $self->{DD_CT} = $dd_ct;
 }
+
+
+=head2 get_2ddct
+
+ Title   : get_2ddctt
+ Usage   : my $rel_express = $sample->get_2ddct();
+ Function: Returns the 2^-ddCt (relative expression) value, if set. Else, returns undef.
+ Returns : Real number, scalar (if set)
+            undef (if unset)
+ Args    : None
+
+=cut
+
+sub get_2ddct() {
+    my $self = shift;
+
+    return $self->{REL_EXPR};
+}
+
+
+=head2 set_2ddct
+
+ Title   : set_2ddct
+ Usage   : $sample->set_2ddct($rel_express);
+ Function: Sets the 2^-ddCt value for the sample
+ Returns : None
+ Args    : Real number, the 2^-ddCt
+
+=cut
+
+sub set_2ddct() {
+    my ($self, $rel_express) = @_;
+
+    # TODO validation
+    $self->{REL_EXPR} = $rel_express;
+}
+
+
 
 #=head2
 #
