@@ -277,12 +277,12 @@ sub filter_outliers() {
             push @filtered, $well;
         }
         else {
-            carp "Warning: value ", $well->get_ct(),
+            warn "Warning: value ", $well->get_ct(),
                 " lies outside permitted error range. Discarding well at position ",
-                $well->get_pos(), " ...\n";
+                $well->get_pos(), " ...\n\n";
 
-            carp "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ",
-                $deviation, " > $self->{CT_STDDEV})\n";
+            warn "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ",
+                $deviation, " > $self->{CT_STDDEV})\n\n";
         }
     }
 

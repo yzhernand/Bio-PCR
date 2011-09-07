@@ -83,10 +83,10 @@ sub new {
     @param{ map { lc $_ } keys %param } = values %param;    # lowercase keys
 
     # Optional arguments
-    my $self->{SEP}      = $param{'-sep'}   // undef;
-    my $self->{CTERR}    = $param{'-cterr'} // undef;
-    my $self->{REFSEQ}   = $param{'-ref'}   // undef;
-    my $self->{CALIBSEQ} = $param{'-calib'} // undef;
+    $self->{SEP}      = $param{'-sep'};
+    $self->{CTERR}    = $param{'-cterr'} // undef;
+    $self->{REFSEQ}   = $param{'-ref'}   // undef;
+    $self->{CALIBSEQ} = $param{'-calib'} // undef;
 
     my $sdsfile = $param{'-file'};
     open my $fh, "<", $sdsfile;
