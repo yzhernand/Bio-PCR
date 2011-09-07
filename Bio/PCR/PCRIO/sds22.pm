@@ -83,6 +83,7 @@ sub new {
     @param{ map { lc $_ } keys %param } = values %param;    # lowercase keys
 
     # Optional arguments
+    my $self->{SEP}      = $param{'-sep'}   // undef;
     my $self->{CTERR}    = $param{'-cterr'} // undef;
     my $self->{REFSEQ}   = $param{'-ref'}   // undef;
     my $self->{CALIBSEQ} = $param{'-calib'} // undef;
@@ -117,7 +118,8 @@ sub new {
         }
 
         if ( $ct =~ /Undetermined/ ) {
-            carp "WARNING: Well $pos is Undetermined. Ignoring...\n" next;
+            carp "WARNING: Well $pos is Undetermined. Ignoring...\n";
+            next;
         }
 
         my $well = Bio::PCR::Well->new( -ct => $ct, -pos => $pos );
@@ -126,9 +128,8 @@ sub new {
 
     close $fh;
 
-    $self->make_experiments();
-
     bless( $self, $caller );
+    $self->_make_experiments();
     return $self;
 }
 
@@ -148,7 +149,10 @@ sub _make_experiments {
     for my $sample ( keys $self->{qpcr_readings} ) {
         my $experiment = Bio::PCR::Experiment->new(
             -name    => $sample,
-            -samples => $self->{qpcr_readings}->{$sample}
+            -samples => $self->{qpcr_readings}->{$sample},
+            -sep     => $self->{SEP},
+            -ref     => $self->{REFSEQ},
+            -calib   => $self->{CALIBSEQ}
         );
         push( @{ $self->{EXPERIMENTS} }, $experiment );
     }
@@ -167,7 +171,7 @@ sub _make_experiments {
 sub get_all_experiments {
     my $self = shift;
 
-    return $self->{qpcr_readings};
+    return $self->{EXPERIMENTS};
 }
 
 1;

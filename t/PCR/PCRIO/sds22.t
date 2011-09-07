@@ -19,7 +19,12 @@ isa_ok( $sdsfile, 'Bio::PCR::PCRIO::sds22' );
 
 my $experiments = $sdsfile->get_all_experiments;
 
-isa_ok( $experiments, 'HASH' );
+isa_ok( $experiments, 'ARRAY' );
 
-print Dumper($experiments), "\n";
+#print Dumper($experiments), "\n";
+
+for my $exp (@$experiments) {
+    $exp->print_2ddct();
+    print "\n";
+}
 
