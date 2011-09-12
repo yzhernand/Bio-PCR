@@ -281,8 +281,8 @@ sub filter_outliers() {
                 " lies outside permitted error range. Discarding well at position ",
                 $well->get_pos(), " ...\n\n";
 
-            warn "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ",
-                $deviation, " > $self->{CT_STDDEV})\n\n";
+            #warn "(|", $well->get_ct(), " - ", $self->{AVG_CT}, "| = ",
+                #$deviation, " > $self->{CT_STDDEV})\n\n";
         }
     }
 
