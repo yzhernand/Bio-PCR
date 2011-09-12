@@ -196,9 +196,9 @@ sub print_2ddct {
                 (   $target,
                     $self->{SAMPLE_NAME},
                     $target_ct[0],
-                    $self->{SAMPLES}->{$reference}->get_avg_ct(),
+                    $self->{SAMPLES}->{$target}->get_avg_ct(),
                     $self->{SAMPLES}->{$target}->get_delta_ct(),
-                    $self->{SAMPLES}->{$reference}->get_dd_ct(),
+                    $self->{SAMPLES}->{$target}->get_dd_ct(),
                     $self->{SAMPLES}->{$target}->get_2ddct(),
                     "When compared to $reference"
                 )

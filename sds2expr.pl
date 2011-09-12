@@ -18,7 +18,7 @@ GetOptions(
     \%opts, "help|h", "man|m", "ref|reference|r:s",
     "calib|c:s" => \&opt_not_implemented,
     "excel|x"   => \&opt_not_implemented,
-    "cterr|e=f", "sep|s=s"
+    "cterr|e=f", "sep|s=s", "use-gene|g"
 ) or pod2usage(2);
 
 pod2usage(1) if $opts{"help"};
@@ -34,11 +34,12 @@ my $sep = $opts{'sep'};
 my $ref = $opts{'ref'} // undef;
 my $calib = $opts{'calib'} // undef;
 my $cterr = $opts{'cterr'} // undef;
+my $use_gene = $opts{'use-gene'} // undef;
 
 my $filename = shift;
 
 # Subject to change once PCRIO.pm is complete
-my $sdsfile = Bio::PCR::PCRIO::sds22->new(-file => $filename, -sep => $sep, -ref => $ref, -cterr => $cterr);
+my $sdsfile = Bio::PCR::PCRIO::sds22->new(-file => $filename, -sep => $sep, -ref => $ref, -cterr => $cterr, '-use-gene' => $use_gene);
 
 my $experiments = $sdsfile->get_all_experiments;
 
@@ -122,6 +123,16 @@ standard output, not to a file).
 
 Any string is a valid separator. The separator does not need to be only
 one character.
+
+=item B<--use-gene, -g>
+
+If specified, will use the "Detector" column as the sample name, and the
+"Sample" column as the "Detector" (the gene).
+
+This is useful if you are running a qPCR on, for example, serial dilutions
+of a single gene, where each dilution is your sample. By specifying this
+option, the calculations will be made by comparing all dilutions of that
+gene.
 
 =back
 

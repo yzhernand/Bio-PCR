@@ -49,6 +49,7 @@ use Carp;
 use Bio::PCR::Well;
 use Bio::PCR::Sample;
 use Bio::PCR::Experiment;
+#use Data::Dumper;
 
 # Look up table for convenience. Has column indicies for needed data
 my %_sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
@@ -87,6 +88,9 @@ sub new {
     $self->{CTERR}    = $param{'-cterr'} // undef;
     $self->{REFSEQ}   = $param{'-ref'}   // undef;
     $self->{CALIBSEQ} = $param{'-calib'} // undef;
+
+    ($_sds_cols{sample}, $_sds_cols{detector}) = ($_sds_cols{detector}, $_sds_cols{sample})
+        if $param{'-use-gene'};
 
     my $sdsfile = $param{'-file'};
     open my $fh, "<", $sdsfile;
@@ -130,6 +134,7 @@ sub new {
 
     bless( $self, $caller );
     $self->_make_experiments();
+
     return $self;
 }
 
