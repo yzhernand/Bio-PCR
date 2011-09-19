@@ -51,6 +51,8 @@ use Bio::PCR::Sample;
 use Bio::PCR::Experiment;
 #use Data::Dumper;
 
+our $VERSION = '0.5';
+
 # Look up table for convenience. Has column indicies for needed data
 my %_sds_cols = ( pos => 0, sample => 1, detector => 2, ct => 5 );
 

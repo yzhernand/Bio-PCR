@@ -58,6 +58,8 @@ use Bio::PCR::Well;
 
 #use Bio::PCR::Experiment;
 
+our $VERSION = '0.5';
+
 =head2 new
 
  Title   : new

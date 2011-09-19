@@ -55,6 +55,8 @@ use Data::Dumper;
 use Bio::PCR::Sample;
 use Bio::PCR::Well;
 
+our $VERSION = '0.5';
+
 =head2 new
 
  Title   : new
