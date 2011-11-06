@@ -1,0 +1,51 @@
+=head1 Bio::PCR::*
+
+A library for parsing qPCR data files, written in a Bio::Perl insipred way.
+
+This library does not depend on BioPerl, so it is not required.
+
+An example script, which does most of the work this library can do, is included
+in the top level directory as sds2expr.pl.
+
+=head2 Supported Formats
+
+At the moment, this library can only read files produced by the software SDS v2.2.2
+
+It is meant as a replacement or alternative to Bioconductor's HTqPCR module, which
+cannot read files from this version of SDS, but is substantially less powerful.
+
+Extensions to read other formats, and to include new features are welcome.
+
+=head2 Usage
+
+Please look at sds2expr.pl for example usage, as well as the documentation in each
+of the included modules.
+
+=head2 Included modules
+
+B<NOTE:> The modules are named using the conventions seen in HTqPCR and SDS.
+
+=over
+
+=item B<Bio::PCR::Experiment> - An Experiment object which holds multiple samples.
+
+=item B<Bio::PCR::Sample> - A sample, comprising a number of wells in a PCR plate.
+
+=item B<Bio::PCR::Well> - Describes a single well on a plate.
+
+=item B<Bio::PCR::PCRIO> - THIS MODULE DOES NOT EXIST YET. Meant to be the main
+reader for qPCR files.
+
+=item B<Bio::PCR::PCRIO::sds22> - The only file format driver currently written.
+This module parses files created by SDS v2.2.2.
+
+=back
+
+=head2 Support/Bugs/Feedback
+
+Please let me know of any bugs or if you would like to contribute (pull
+requests welcome). I'd like to develop this software further so that it
+can be useful to all.
+
+=cut
+
