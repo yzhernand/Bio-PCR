@@ -153,7 +153,7 @@ sub new {
 sub _make_experiments {
     my $self = shift;
 
-    for my $sample ( keys $self->{qpcr_readings} ) {
+    for my $sample ( keys %{ $self->{qpcr_readings} } ) {
         my $experiment = Bio::PCR::Experiment->new(
             -name    => $sample,
             -samples => $self->{qpcr_readings}->{$sample},

@@ -232,7 +232,7 @@ sub print_2ddct {
 sub _discard_empty_samples {
     my $self = shift;
 
-    for my $sample ( keys $self->{SAMPLES} ) {
+    for my $sample ( keys %{ $self->{SAMPLES} } ) {
         my $num_wells = $self->{SAMPLES}->{$sample}->num_wells;
 
         $self->{SAMPLES}->{$sample}->filter_outliers()

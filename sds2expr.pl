@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use 5.010;
-use autodie;
 use FindBin;                # Find the location of this script
 use lib "$FindBin::Bin";    # to use it as a lib path
 use Getopt::Long qw(:config gnu_getopt);
